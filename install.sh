@@ -16,7 +16,7 @@ print_help()
     echo "--help                Print help info."
     echo ""
     echo "--chirpstack=[install/not_install]"
-    echo "                      Chirpstack, default value is install"
+    echo "                      Chirpstack, default value is not_install"
     echo ""
     exit
 }
@@ -27,7 +27,7 @@ ARGS=`getopt -o "" -l "help,img,chirpstack:" -- "$@"`
 
 eval set -- "${ARGS}"
 
-INSTALL_CHIRPSTACK=1
+INSTALL_CHIRPSTACK=0
 
 CREATE_IMG=""
 
@@ -50,13 +50,13 @@ while true; do
                 INSTALL_CHIRPSTACK=0
             elif [ "install" = "${1}" ]; then
                 INSTALL_CHIRPSTACK=1
+                # Warn if not Pi 3/4, but still install since user explicitly requested it
+                if [ $rpi_model -ne 3 ] && [ $rpi_model -ne 4 ]; then
+                    echo_warn "ChirpStack installation requested on non-Pi 3/4 model. Proceeding anyway."
+                fi
             else
                 echo "invalid value"
                 exit
-            fi
-
-            if [ $rpi_model -ne 3 ] && [ $rpi_model -ne 4 ]; then
-                INSTALL_CHIRPSTACK=1
             fi
             shift;
         fi
