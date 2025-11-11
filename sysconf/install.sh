@@ -13,15 +13,16 @@ if [ $UID != 0 ]; then
     exit 1
 fi
 
-if [[ $NEW_HOSTNAME == "" ]]; then NEW_HOSTNAME="rak-gateway"; fi
-# Change hostname if needed
-CURRENT_HOSTNAME=$(hostname)
-
-if [[ $NEW_HOSTNAME != $CURRENT_HOSTNAME ]]; then
-    echo "Updating hostname to '$NEW_HOSTNAME'..."
-    hostname $NEW_HOSTNAME
-    echo $NEW_HOSTNAME > /etc/hostname
-    sed -i "s/$CURRENT_HOSTNAME/$NEW_HOSTNAME/" /etc/hosts
+# Change hostname only if NEW_HOSTNAME is explicitly set
+# If not set, preserve the existing hostname (hostname is not required for gateway functionality)
+if [[ -n "$NEW_HOSTNAME" ]]; then
+    CURRENT_HOSTNAME=$(hostname)
+    if [[ $NEW_HOSTNAME != $CURRENT_HOSTNAME ]]; then
+        echo "Updating hostname to '$NEW_HOSTNAME'..."
+        hostname $NEW_HOSTNAME
+        echo $NEW_HOSTNAME > /etc/hostname
+        sed -i "s/$CURRENT_HOSTNAME/$NEW_HOSTNAME/" /etc/hosts
+    fi
 fi
 
 # add rak_script to rc.local
