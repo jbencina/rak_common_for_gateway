@@ -156,6 +156,55 @@ echo "Restoring original boot configuration..."
 
 echo ""
 echo "========================================"
+echo "System files uninstalled!"
+echo "========================================"
+echo ""
+
+# Ask about cleaning up source directory build artifacts
+echo "Do you want to clean up build artifacts in the source directory?"
+echo "This will remove:"
+echo "  - lora/lora_gateway/"
+echo "  - lora/packet_forwarder/"
+echo "  - lora/rak*/sx1303_hal/"
+echo "  - lora/rak*/global_conf/"
+echo "  - ap/create_ap/"
+echo ""
+read -p "Clean up build artifacts? (yes/no): " CLEAN_SOURCE
+
+if [ "$CLEAN_SOURCE" = "yes" ]; then
+    echo ""
+    read -p "Enter the full path to your source directory (e.g. /home/pi/rak_common_for_gateway): " SOURCE_DIR
+    
+    if [ -z "$SOURCE_DIR" ]; then
+        echo_yellow "No path provided, skipping source cleanup"
+    elif [ ! -d "$SOURCE_DIR" ]; then
+        echo_red "Directory '$SOURCE_DIR' does not exist, skipping source cleanup"
+    else
+        echo "Cleaning up build artifacts in $SOURCE_DIR..."
+        
+        # Remove cloned repositories
+        rm -rf "$SOURCE_DIR/lora/lora_gateway" 2>/dev/null || true
+        rm -rf "$SOURCE_DIR/lora/packet_forwarder" 2>/dev/null || true
+        
+        # Remove RAK model build artifacts
+        for rakdir in "$SOURCE_DIR/lora"/rak*/; do
+            if [ -d "$rakdir" ]; then
+                rm -rf "${rakdir}sx1303_hal" 2>/dev/null || true
+                rm -rf "${rakdir}lora_gateway" 2>/dev/null || true
+                rm -rf "${rakdir}packet_forwarder" 2>/dev/null || true
+                rm -rf "${rakdir}global_conf" 2>/dev/null || true
+            fi
+        done
+        
+        # Remove AP artifacts
+        rm -rf "$SOURCE_DIR/ap/create_ap" 2>/dev/null || true
+        
+        echo_green "Source directory cleaned!"
+    fi
+fi
+
+echo ""
+echo "========================================"
 echo "Uninstall complete!"
 echo "========================================"
 echo ""
