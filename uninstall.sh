@@ -101,9 +101,10 @@ if [ "$INSTALL_LTE" -eq 1 ]; then
     echo "  - LTE/PPP configuration (as this is an LTE model)"
 fi
 echo ""
-read -p "Continue? (yes/no): " CONFIRM
+read -p "Continue? (Y/n): " CONFIRM
+CONFIRM=${CONFIRM:-y}  # Default to 'y' if empty
 
-if [ "$CONFIRM" != "yes" ]; then
+if [[ ! "$CONFIRM" =~ ^[Yy]([Ee][Ss])?$ ]]; then
     echo "Uninstall cancelled."
     exit 0
 fi
@@ -173,12 +174,12 @@ echo "  - lora/lora_gateway/"
 echo "  - lora/packet_forwarder/"
 echo "  - lora/rak*/sx1302_hal/ (cloned)"
 echo "  - lora/rak*/sx1303_hal/ (renamed)"
-echo "  - lora/rak*/global_conf/"
 echo "  - ap/create_ap/"
 echo ""
-read -p "Clean up build artifacts? (yes/no): " CLEAN_SOURCE
+read -p "Clean up build artifacts? (Y/n): " CLEAN_SOURCE
+CLEAN_SOURCE=${CLEAN_SOURCE:-y}  # Default to 'y' if empty
 
-if [ "$CLEAN_SOURCE" = "yes" ]; then
+if [[ "$CLEAN_SOURCE" =~ ^[Yy]([Ee][Ss])?$ ]]; then
     echo ""
     echo "Cleaning up build artifacts in $SOURCE_DIR..."
     
@@ -194,7 +195,6 @@ if [ "$CLEAN_SOURCE" = "yes" ]; then
             rm -rf "${rakdir}sx1303_hal" 2>/dev/null || true
             rm -rf "${rakdir}lora_gateway" 2>/dev/null || true
             rm -rf "${rakdir}packet_forwarder" 2>/dev/null || true
-            rm -rf "${rakdir}global_conf" 2>/dev/null || true
         fi
     done
     
