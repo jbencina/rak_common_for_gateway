@@ -13,7 +13,12 @@ if [ $UID != 0 ]; then
     exit 1
 fi
 
-systemctl disable hciuart
+# Disable hciuart if it exists (older Raspbian versions)
+# This service manages Bluetooth over UART, which conflicts with LoRa modules
+# In newer versions, Bluetooth is disabled via dtoverlay=disable-bt in config.txt
+if systemctl list-unit-files | grep -q "^hciuart.service"; then
+    systemctl disable hciuart 2>/dev/null || true
+fi
 
 apt install git ppp dialog jq minicom monit i2c-tools -y
 
