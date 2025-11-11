@@ -45,7 +45,15 @@ timedatectl set-timezone UTC
 timedatectl set-ntp true
 
 cp config.txt /boot/config.txt
-cp motd /etc/motd -f
+
+# Copy MOTD banner only if INSTALL_MOTD environment variable is set to 1
+# By default, don't overwrite the existing MOTD
+if [ "${INSTALL_MOTD}" = "1" ]; then
+    echo "Installing RAK MOTD banner..."
+    cp motd /etc/motd -f
+else
+    echo "Skipping MOTD banner installation (set INSTALL_MOTD=1 to enable)"
+fi
 
 CMD_STR=`cat /boot/cmdline.txt`
 echo "$CMD_STR modules-load=dwc2,g_ether" > /boot/cmdline.txt
