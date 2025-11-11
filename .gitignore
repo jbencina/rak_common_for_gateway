@@ -6,6 +6,7 @@ rak/rak/gateway-config-info.json
 # Cloned repositories during build
 lora/lora_gateway/
 lora/packet_forwarder/
+lora/rak*/sx1302_hal/
 lora/rak*/sx1303_hal/
 lora/rak*/lora_gateway/
 lora/rak*/packet_forwarder/
