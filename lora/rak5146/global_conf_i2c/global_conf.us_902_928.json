@@ -10,6 +10,21 @@
             "enable": false,
             "mode": "all_sf" /* high_capacity or all_sf */
         },
+        "sx1261_conf": {
+            "rssi_offset": 20, /* dB */
+            "spectral_scan": {
+                "enable": false,
+                "freq_start": 903900000,
+                "nb_chan": 8,
+                "nb_scan": 2000,
+                "pace_s": 10
+            },
+            "lbt": {
+                "enable": false,
+                "rssi_target": -80, /* dBm */
+                "channels": []
+            }
+        },
         "radio_0": {
             "enable": true,
             "type": "SX1250",

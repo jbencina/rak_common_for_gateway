@@ -55,5 +55,9 @@ dtparam=i2c1=on, dtparam=i2c_arm_baudrate=100000
 
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
+
+# Disable Bluetooth to free UART for LoRa modules (GPS/LTE use /dev/ttyAMA0)
 dtoverlay=disable-bt
+# Explicitly enable UART hardware (required when Bluetooth is disabled)
+enable_uart=1
 

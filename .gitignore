@@ -1,0 +1,31 @@
+# Files modified during installation process
+# These get copied to /usr/local/rak/ during install
+rak/rak/rak_gw_model.json
+rak/rak/gateway-config-info.json
+
+# Cloned repositories during build
+lora/lora_gateway/
+lora/packet_forwarder/
+lora/rak*/sx1302_hal/
+lora/rak*/sx1303_hal/
+lora/rak*/lora_gateway/
+lora/rak*/packet_forwarder/
+
+# Build artifacts - generated directories
+lora/rak*/global_conf/
+ap/create_ap/
+
+# Build artifacts - compiled files
+*.o
+*.a
+*.so
+lora_pkt_fwd
+test_*
+util_*
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
