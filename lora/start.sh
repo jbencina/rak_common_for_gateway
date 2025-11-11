@@ -29,16 +29,51 @@ fi
 # -------- RESET SEQUENCE --------
 if command -v gpioset &> /dev/null; then
     echo "[INFO] Using GPIOD (gpioset) for reset"
-
-    gpioset ${GPIO_CHIP} ${RESET_GPIO}=0
-    sleep 0.1
-    gpioset ${GPIO_CHIP} ${RESET_GPIO}=1
-    sleep 0.1
-    gpioset ${GPIO_CHIP} ${RESET_GPIO}=0
-    sleep 0.1
+    
+    # Detect libgpiod version by checking available options
+    # v1.x: has --mode flag
+    # v2.x: has --chip flag and different syntax
+    if gpioset --help 2>&1 | grep -q '\-\-mode'; then
+        # libgpiod v1.x syntax
+        echo "[INFO] Detected libgpiod v1.x, using --mode=time"
+        gpioset --mode=time --sec=0.1 ${GPIO_CHIP} ${RESET_GPIO}=0
+        sleep 0.1
+        gpioset --mode=time --sec=0.1 ${GPIO_CHIP} ${RESET_GPIO}=1
+        sleep 0.1
+        gpioset --mode=time --sec=0.1 ${GPIO_CHIP} ${RESET_GPIO}=0
+        sleep 0.1
+    elif gpioset --help 2>&1 | grep -q '\-\-chip'; then
+        # libgpiod v2.x syntax (requires timeout to force exit)
+        echo "[INFO] Detected libgpiod v2.x, using -c flag with timeout"
+        timeout 0.2s gpioset -c ${GPIO_CHIP} ${RESET_GPIO}=0
+        sleep 0.1
+        timeout 0.2s gpioset -c ${GPIO_CHIP} ${RESET_GPIO}=1
+        sleep 0.1
+        timeout 0.2s gpioset -c ${GPIO_CHIP} ${RESET_GPIO}=0
+        sleep 0.1
+    else
+        # Unknown version, fall back to sysfs
+        echo "[INFO] gpioset version not recognized, using Sysfs GPIO"
+        GPIO_PATH="/sys/class/gpio/gpio${RESET_GPIO}"
+        
+        if [ ! -d "$GPIO_PATH" ]; then
+            echo $RESET_GPIO > /sys/class/gpio/export
+            sleep 0.1
+        fi
+        
+        echo "out" > ${GPIO_PATH}/direction
+        echo 0 > ${GPIO_PATH}/value
+        sleep 0.1
+        echo 1 > ${GPIO_PATH}/value
+        sleep 0.1
+        echo 0 > ${GPIO_PATH}/value
+        sleep 0.1
+        
+        echo $RESET_GPIO > /sys/class/gpio/unexport
+    fi
 
 else
-    echo "[INFO] Using Sysfs GPIO for reset"
+    echo "[INFO] gpioset not found, using Sysfs GPIO for reset"
 
     GPIO_PATH="/sys/class/gpio/gpio${RESET_GPIO}"
 
