@@ -1,5 +1,16 @@
 # rak_common_for_gateway
 
+## **[Read Me]: Fork Changes **
+This is a fork of the original RAK repository at https://github.com/RAKWireless/rak_common_for_gateway which allows for the RAK5146 to correctly work with a Raspberry PI4B on Debian 13 (Trixie). Some additional quality of life changes were added:
+
+- Fixes a broken config for US region which prevented operation when selected
+- Fixes outdated gpioset references that prevented execution and now support both libgpiod v1.x and v2.x
+- Removed an outdated bluetooth system reference
+- Removed default Chirpstack install so users can run newer versions
+- Added an uninstall script to remove the installed artifacts
+
+Assuming the user has run `sudo raspi-config` to enable SPI/I2C, running `sudo ./install.sh` should "just work" to correctly install the RAK5146 + PI4B + RAK2287 Hat stack. 
+
 ##	Introduction 
 
 The aim of this project is to help users to use the RAK Raspberry Pi Developer Gateway more easily. The User Guide can be get from our Web(https://docs.rakwireless.com/Introduction/).
